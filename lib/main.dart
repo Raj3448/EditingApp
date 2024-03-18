@@ -1,7 +1,10 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:zapx/zapx.dart';
 
-void main() {
+void main() async {
   runApp(MyApp());
 }
 
@@ -32,6 +35,16 @@ class _TextEditorScreenState extends State<TextEditorScreen> {
   Offset position = const Offset(0, 0);
   List<TextChange> history = [];
   int historyIndex = -1;
+  int fontNumber = 0;
+  List<String> fontNames = [
+    'Abel',
+    'Aboreto',
+    'Robot',
+    'GochiHand',
+    'BenchNine',
+    'londRineOutline'
+  ];
+  String selectedFont = 'Abel';
 
   @override
   Widget build(BuildContext context) {
@@ -75,29 +88,45 @@ class _TextEditorScreenState extends State<TextEditorScreen> {
                     Positioned(
                       left: position.dx,
                       top: position.dy,
-                      child: Text(
-                        text,
-                        style: TextStyle(
-                          fontFamily: '',
-                          color: textColor,
-                          fontSize: textSize,
-                        ),
-                      ),
+                      child: Text(text, style: _getFontStyle(selectedFont)),
                     ),
                   ],
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextField(
-                    onChanged: (value) {
-                      _updateText(value);
-                    },
-                    decoration: InputDecoration(labelText: 'Text'),
+                  Row(
+                    children: [
+                      const Text('Edit Text: '),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: SizedBox(
+                          height: 40,
+                          child: TextField(
+                            onChanged: (value) {
+                              _updateText(value);
+                            },
+                            decoration: InputDecoration(
+                                hintText: 'Enter Text',
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        width: 2, color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(10)),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                        color: Colors.grey, width: 2))),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 10),
                   Row(
@@ -133,6 +162,65 @@ class _TextEditorScreenState extends State<TextEditorScreen> {
                             _updateTextSize(value);
                           },
                         ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text('Text Style:'),
+                      const SizedBox(width: 10),
+                      SizedBox(
+                        height: 40,
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        child: DropdownButton2(
+                            isExpanded: true,
+                            alignment: Alignment.topLeft,
+                            buttonStyleData: ButtonStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border:
+                                    Border.all(width: 2, color: Colors.grey),
+                              ),
+                            ),
+                            underline: Text(
+                              selectedFont.isEmpty
+                                  ? 'Select FontStyle'
+                                  : selectedFont,
+                              textAlign: TextAlign.left,
+                              style: const TextStyle(
+                                  overflow: TextOverflow.ellipsis),
+                            ).paddingOnly(left: 10),
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'Abel',
+                                child: Text('Abel'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'Aboreto',
+                                child: Text('Aboreto'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'Robot',
+                                child: Text('Robot'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'GochiHand',
+                                child: Text('GochiHand'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'BenchNine',
+                                child: Text('BenchNine'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'londRineOutline',
+                                child: Text('londRineOutline'),
+                              )
+                            ],
+                            onChanged: (identifier) {
+                              setState(() {
+                                selectedFont = identifier!;
+                              });
+                            }),
                       ),
                     ],
                   ),
@@ -234,13 +322,13 @@ class _TextEditorScreenState extends State<TextEditorScreen> {
               onPressed: () {
                 Navigator.of(context).pop(textColor);
               },
-              child: Text('Select'),
+              child: const Text('Select'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
           ],
         );
@@ -252,6 +340,61 @@ class _TextEditorScreenState extends State<TextEditorScreen> {
         textColor = newColor;
       });
     }
+  }
+
+  TextStyle _getFontStyle(String selectedFont) {
+    TextStyle style = GoogleFonts.aBeeZee(
+        textStyle: TextStyle(
+      fontSize: textSize,
+      color: textColor,
+    ));
+    switch (selectedFont) {
+      case 'Abel':
+        style = GoogleFonts.abel(
+            textStyle: TextStyle(
+          fontSize: textSize,
+          color: textColor,
+        ));
+        break;
+      case 'Aberote':
+        style = GoogleFonts.aboreto(
+            textStyle: TextStyle(
+          fontSize: textSize,
+          color: textColor,
+        ));
+        break;
+      case 'Robot':
+        style = GoogleFonts.roboto(
+            textStyle: TextStyle(
+          fontSize: textSize,
+          color: textColor,
+        ));
+        break;
+      case 'GochiHand':
+        style = GoogleFonts.gochiHand(
+            textStyle: TextStyle(
+          fontSize: textSize,
+          color: textColor,
+        ));
+        break;
+      case 'BenchNine':
+        style = GoogleFonts.benchNine(
+            textStyle: TextStyle(
+          fontSize: textSize,
+          color: textColor,
+        ));
+        break;
+      case 'londRineOutline':
+        style = GoogleFonts.londrinaOutline(
+            textStyle: TextStyle(
+          fontSize: textSize,
+          color: textColor,
+        ));
+        break;
+      default:
+        style = style;
+    }
+    return style;
   }
 }
 

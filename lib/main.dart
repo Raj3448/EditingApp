@@ -4,6 +4,8 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zapx/zapx.dart';
 
+import 'model/text_chanage.dart';
+
 void main() async {
   runApp(MyApp());
 }
@@ -36,6 +38,13 @@ class _TextEditorScreenState extends State<TextEditorScreen> {
   List<TextChange> history = [];
   int historyIndex = -1;
   int fontNumber = 0;
+  final TextEditingController _textEditingController = TextEditingController();
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
   List<String> fontNames = [
     'Abel',
     'Aboreto',
@@ -45,6 +54,12 @@ class _TextEditorScreenState extends State<TextEditorScreen> {
     'londRineOutline'
   ];
   String selectedFont = 'Abel';
+  List<Widget> textWidgetList = [];
+  @override
+  void initState() {
+    super.initState();
+    textWidgetList.add(getTextFieldWidget());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +103,20 @@ class _TextEditorScreenState extends State<TextEditorScreen> {
                     Positioned(
                       left: position.dx,
                       top: position.dy,
-                      child: Text(text, style: _getFontStyle(selectedFont)),
+                      child: SizedBox(
+                        height: 70,
+                        width: 12 * textSize,
+                        child: TextField(
+                          controller: _textEditingController,
+                          style: _getFontStyle(selectedFont),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(2)),
+                            hintText: 'Enter text',
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -100,34 +128,6 @@ class _TextEditorScreenState extends State<TextEditorScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    children: [
-                      const Text('Edit Text: '),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: SizedBox(
-                          height: 40,
-                          child: TextField(
-                            onChanged: (value) {
-                              _updateText(value);
-                            },
-                            decoration: InputDecoration(
-                                hintText: 'Enter Text',
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        width: 2, color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(10)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                        color: Colors.grey, width: 2))),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 10),
                   Row(
                     children: [
@@ -228,6 +228,27 @@ class _TextEditorScreenState extends State<TextEditorScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  getTextFieldWidget() {
+    return Positioned(
+      left: position.dx,
+      top: position.dy,
+      child: SizedBox(
+        height: 70,
+        width: 12 * textSize,
+        child: TextField(
+          controller: _textEditingController,
+          style: _getFontStyle(selectedFont),
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            focusedBorder:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(2)),
+            hintText: 'Enter text',
+          ),
         ),
       ),
     );
@@ -396,18 +417,4 @@ class _TextEditorScreenState extends State<TextEditorScreen> {
     }
     return style;
   }
-}
-
-class TextChange {
-  final String text;
-  final Color textColor;
-  final double textSize;
-  final Offset position;
-
-  TextChange({
-    required this.text,
-    required this.textColor,
-    required this.textSize,
-    required this.position,
-  });
 }
